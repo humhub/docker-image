@@ -28,5 +28,11 @@ jobs:
         docker tag docker_humhub:latest humhub/humhub:latest
         docker push humhub/humhub:latest
       env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+    - name: Upload Docker Hub Description
+      uses: peter-evans/dockerhub-description@v2
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        DOCKERHUB_REPOSITORY: humhub/humhub
