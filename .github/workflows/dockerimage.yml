@@ -12,12 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Pull existing image as cache (if possible)
-      run: |
-        docker login -u publisher -p ${DOCKER_TOKEN} docker.pkg.github.com
-        docker pull docker.pkg.github.com/${GITHUB_REPOSITORY}/humhub:latest || true
-      env:
-        DOCKER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Build docker image
       run: docker-compose build
     - name: Spin up services
@@ -28,10 +22,11 @@ jobs:
       run: docker ps -a
     - name: Test
       run: curl http://localhost:8080/ -L --fail -s | grep 'Sign in</button>' -q
-    - name: Publish Docker Image to GitHub Packages Registry
+    - name: Publish Docker Image to Docker Hub
       run: |
-        docker login -u publisher -p ${DOCKER_TOKEN} docker.pkg.github.com
-        docker tag docker_humhub:latest docker.pkg.github.com/${GITHUB_REPOSITORY}/humhub:latest
-        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/humhub:latest
+        docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+        docker tag docker_humhub:latest humhub/humhub:latest
+        docker push humhub/humhub:latest
       env:
-        DOCKER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
